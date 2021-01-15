@@ -9,6 +9,10 @@ const TYPEOF = {
 
 module.exports = {
   WORKSHEET: 'TEST_CASE',
+  COLUMN_TYPE_ACTION: 'A',
+  COLUMN_NAME: 'B',
+  COLUMN_INPIUT: 'C',
+  COLUMN_DESCRIPTION: 'D',
   TYPE_ACTION: 'A:A',
   NAME: 'B:B',
   INPUT: 'C:C',
@@ -23,6 +27,7 @@ module.exports = {
     SET_TEXT: 'setText',
     GET_TEXT: 'getText',
     REFRESH: 'refresh',
+    COMMENT: 'comment',
   },
   ACTION_DATA_TYPE: {
     OPEN_BROWSER: [TYPEOF.STRING],
@@ -34,5 +39,6 @@ module.exports = {
     SET_TEXT: [TYPEOF.NULL, TYPEOF.UNDEFINED],
     GET_TEXT: [TYPEOF.STRING, TYPEOF.NUMBER],
     REFRESH: [TYPEOF.NOT_ALLOW_INPUT],
+    COMMENT: [TYPEOF.NOT_ALLOW_INPUT],
   },
 };

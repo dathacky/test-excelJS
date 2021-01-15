@@ -1,4 +1,5 @@
 const ExcelJS = require('exceljs');
+const { values } = require('lodash');
 const DEFINE = require('../../constants');
 
 class Excel {
@@ -24,6 +25,39 @@ class Excel {
       created_at,
       description,
     };
+  }
+  async exportProject(file) {
+    await this.workbook.xlsx.writeFile(file);
+  }
+  validationAllTestCase() {
+    const worksheetTestcases = this.workbook.getWorksheet(
+      DEFINE.TESTCASES.WORKSHEET,
+    );
+    worksheetTestcases
+      .getColumn(DEFINE.TESTCASES.NAME_WORKSHEET)
+      .eachCell({ includeEmpty: false }, (cell) => {
+        const nameTestcase = cell.value;
+        this.validationTestCase(nameTestcase);
+      });
+  }
+  validationTestCase(worksheetName) {
+    //TODO validation input, description
+    const worksheetTestcase = this.workbook.getWorksheet(worksheetName);
+    const options = values(DEFINE.TESTCASE.LIST_ACTION).join(',');
+    worksheetTestcase
+      .getColumn(DEFINE.TESTCASE.COLUMN_TYPE_ACTION)
+      .eachCell({ includeEmpty: true }, (cell) => {
+        cell.dataValidation = {
+          type: 'list',
+          allowBlank: false,
+          formulae: [`"${options}"`],
+          operator: 'equal',
+          showErrorMessage: true,
+          errorStyle: 'error',
+          errorTitle: 'Invalid action',
+          error: 'The action invalid, must be the value in the list',
+        };
+      });
   }
   get sumary() {
     return this._sumary;
