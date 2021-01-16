@@ -1,3 +1,5 @@
+const { isEmpty } = require('lodash');
+
 const TYPEOF = {
   STRING: 'string',
   NULL: 'null',
@@ -6,6 +8,18 @@ const TYPEOF = {
   BOOLEAN: 'boolean',
   NOT_ALLOW_INPUT: 'not_allow_input',
 };
+
+function isString(data) {
+  return typeof data === TYPEOF.STRING;
+}
+
+function notAllowInput(data) {
+  return isEmpty(data);
+}
+
+function isNumber(data) {
+  return !isNaN(data);
+}
 
 module.exports = {
   WORKSHEET: 'TEST_CASE',
@@ -30,15 +44,15 @@ module.exports = {
     COMMENT: 'comment',
   },
   ACTION_DATA_TYPE: {
-    OPEN_BROWSER: [TYPEOF.STRING],
-    CLOSE_BROWSER: [TYPEOF.NOT_ALLOW_INPUT],
-    CLICK: [TYPEOF.STRING, TYPEOF.NUMBER],
-    DELAY: [TYPEOF.NUMBER],
-    BACK: [TYPEOF.NOT_ALLOW_INPUT],
-    SEND_KEY: [TYPEOF.STRING, TYPEOF.NUMBER],
-    SET_TEXT: [TYPEOF.NULL, TYPEOF.UNDEFINED],
-    GET_TEXT: [TYPEOF.STRING, TYPEOF.NUMBER],
-    REFRESH: [TYPEOF.NOT_ALLOW_INPUT],
-    COMMENT: [TYPEOF.NOT_ALLOW_INPUT],
+    OPEN_BROWSER: (data) => isString(data),
+    CLOSE_BROWSER: (data) => notAllowInput(data),
+    CLICK: (data) => isString(data),
+    DELAY: (data) => isNumber(data),
+    BACK: (data) => notAllowInput(data),
+    SEND_KEY: (data) => isString(data),
+    SET_TEXT: (data) => isString(data),
+    GET_TEXT: (data) => isString(data),
+    REFRESH: (data) => notAllowInput(data),
+    COMMENT: (data) => notAllowInput(data),
   },
 };
