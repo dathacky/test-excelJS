@@ -1,5 +1,5 @@
 const ExcelJS = require('exceljs');
-const { get, values, findKey } = require('lodash');
+const { get, values, findKey, find } = require('lodash');
 const DEFINE = require('../../constants');
 
 class Excel {
@@ -45,7 +45,7 @@ class Excel {
   }
 
   addDataValidationTestCase(worksheetName) {
-    //TODO validation input, description
+    //TODO validation input, description, check exist worksheet
     const worksheetTestcase = this.workbook.getWorksheet(worksheetName);
     const options = values(DEFINE.TESTCASE.LIST_ACTION).join(',');
     worksheetTestcase
@@ -78,7 +78,7 @@ class Excel {
         if (!resultScript.isValid) {
           invalid.push(nameWorksheetTestcase);
         }
-        scripts.push(resultScript.actions);
+        scripts.push(...resultScript.actions);
       });
     return { scripts, invalid };
   }
@@ -88,11 +88,26 @@ class Excel {
     let valid = true;
     const worksheetTestcase = this.workbook.getWorksheet(testcaseName);
     worksheetTestcase.eachRow({ includeEmpty: false }, (cell) => {
+      const numberCell = get(cell, 'number');
       const testcaseName = get(cell, 'worksheet.name');
-      const typeAction = get(cell, 'model.cells[0].value');
-      const name = get(cell, 'model.cells[1].value');
-      const input = get(cell, 'model.cells[2].value');
-      const description = get(cell, 'model.cells[3].value');
+      const modelCells = get(cell, 'model.cells');
+      const typeActionCell = find(modelCells, {
+        address: DEFINE.TESTCASE.COLUMN_TYPE_ACTION + numberCell,
+      });
+      const xpathCell = find(modelCells, {
+        address: DEFINE.TESTCASE.COLUMN_XPATH + numberCell,
+      });
+      const inputCell = find(modelCells, {
+        address: DEFINE.TESTCASE.COLUMN_INPUT + numberCell,
+      });
+      const descriptionCell = find(modelCells, {
+        address: DEFINE.TESTCASE.COLUMN_DESCRIPTION + numberCell,
+      });
+      const typeAction = get(typeActionCell, 'value');
+      const xpath = get(xpathCell, 'value') || get(xpathCell, 'text');
+      const input = get(inputCell, 'value') || get(inputCell, 'text');
+      const description =
+        get(descriptionCell, 'value') || get(descriptionCell, 'text');
       const isValid = this.validateAction(typeAction, input);
       if (!isValid) {
         valid = false;
@@ -100,7 +115,7 @@ class Excel {
       const dataScript = {
         testcaseName,
         typeAction,
-        name,
+        xpath,
         input,
         description,
         isValid,

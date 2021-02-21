@@ -12,6 +12,7 @@
     "exceljs": "^4.2.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "path": "^0.12.7",
     "selenium-webdriver": "^4.0.0-alpha.8"
   }
 }
